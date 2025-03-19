@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: livrodb
+      MYSQL_USER: livrouser
+      MYSQL_PASSWORD: 87654321
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  livro-app:
+    build: .
+    container_name: livroApp
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/livrodb?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=livrouser
+      - SPRING_DATASOURCE_PASSWORD=87654321
+    depends_on:
+      - mysql-db
+
+volumes:
+  mysql_data:
